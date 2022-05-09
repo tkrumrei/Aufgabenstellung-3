@@ -1,11 +1,16 @@
-function getHaltestellen() {
-    let haltestellen = new XMLHttpRequest
-
-    haltestellen.open('Get', 'https://rest.busradar.conterra.de/prod/haltestellen',true)
-    haltestellen.responseType = 'json'
-    haltestellen.onload = () => {
-        pointcloud = haltestellen.response
-        main(point,pointcloud)
+class Haltestellen {
+    constructor() {
+        this.haltestellen = new XMLHttpRequest   
     }
-    haltestellen.send()
+
+    getHaltestellen() {
+        
+        this.haltestellen.open('Get', 'https://rest.busradar.conterra.de/prod/haltestellen',true)
+        this.haltestellen.responseType = 'json'
+        this.haltestellen.onload = () => {
+            pointcloud = haltestellen.response
+            main(point,pointcloud)
+        }
+        this.haltestellen.send()
+    }
 }
