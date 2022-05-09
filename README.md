@@ -4,7 +4,7 @@
 Konzepte: Web-APIs, Callback-Funktionen, Objektorientierte Programmierung, XHRRequests, JSDoc
 
 Das Ziel dieser Aufgabe ist es, die Distanz vom Nutzerstandort zu den Bushaltestellen in der Umgebung,
-und die Abfahrtszeiten der ächsten Bushaltestelle darzustellen.
+und die Abfahrtszeiten der nächsten Bushaltestelle darzustellen.
 Erweitert eure letzte Abgabe um das Abfragen der Standorte der münsteraner Bushaltestellen. Benutzt das XHR-Objekt
 des Browsers um Anfragen an den Haltestellen-Endpunkt der web-API auf api.busradar.conterra.de zu stellen.
 Anstelle des pois-Datensatzes soll die Seite nun die Entfernungen der Bushaltestellen zum Nutzerstandort anzeigen. 
