@@ -252,7 +252,6 @@ function getHaltestellen() {
           res.features[i].geometry.coordinates
         )
       }
-      console.log(haltestellen)
   }
   xhr.send()
 }
