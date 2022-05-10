@@ -233,3 +233,27 @@ function showPosition(position) {
   outJSON.features.push(pointFeature);
   x.innerHTML = JSON.stringify(outJSON);
 }
+
+/**
+ * @function getHaltestellen
+ * @description with XHR Request Haltestellen-Array erstellen 
+ */
+function getHaltestellen() {
+  let xhr = new XMLHttpRequest 
+  xhr.open('Get', 'https://rest.busradar.conterra.de/prod/haltestellen',true)
+  xhr.onload = () => {
+      let res = JSON.parse(xhr.response)
+      let haltestellen = new Array(res.features.length)
+      for (var i = 0; i < res.features.length; i++) {
+        haltestellen[i] = new Haltestelle(
+          res.features[i].properties.nr,
+          res.features[i].properties.lbez, 
+          res.features[i].properties.richtung, 
+          res.features[i].geometry.coordinates
+        )
+      }
+      console.log(haltestellen)
+  }
+  xhr.send()
+}
+
