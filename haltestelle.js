@@ -4,7 +4,7 @@ class Haltestelle {
           this.lbez = lbez;
           this.richtung = richtung;
           this.coordinates = coordinates;
-          this.aURL = `https://rest.busradar.conterra.de/prod/haltestellen/${nr}/abfahrten?sekunden=3000`;
+          this.aURL = `https://rest.busradar.conterra.de/prod/haltestellen/${nr}/abfahrten?sekunden=300`;
     }
 
     

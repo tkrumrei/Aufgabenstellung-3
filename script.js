@@ -215,7 +215,7 @@ function drawTableAbfahrt(res) {
     cel1.innerHTML = res[j].linienid;
     cel2.innerHTML = res[j].lbez;
     cel3.innerHTML = res[j].richtungstext;
-    cel4.innerHTML = zeitUmrechnen(res[j].ankunftszeit);
+    cel4.innerHTML = verbleibendeZeit(res[j].ankunftszeit);
   }
 }
 
@@ -293,13 +293,15 @@ function getAbfahrten(naechsteHaltestelle) {
     } else {
       let res = JSON.parse(xhr2.response);
       console.log(res);
+      let message = "";
       if(res.length > 0) {
-        document.getElementById('AbfahrtVon').innerHTML = 'Hier sind die Busse, die von ' + naechsteHaltestelle.name + ' abfahren:';
+        message = 'Hier sind die Busse, die von ' + naechsteHaltestelle.name + ' abfahren:';
+        document.getElementById('AbfahrtVon').innerHTML = message;
         drawTableAbfahrt(res);
       } else {
-        document.getElementById('AbfahrtVon').innerHTML = "Leider fahren in den nächsten 5 Minuten keine Busse von der Haltestelle " + naechsteHaltestelle.name + ".";
+        message = "Leider fahren in den nächsten 5 Minuten keine Busse von der Haltestelle " + naechsteHaltestelle.name + ".";
+        document.getElementById('AbfahrtVon').innerHTML = message;
         console.log("Ausblenden");
-        document.getElementById('resultTableAbfahrt').style.visibility = none ;
       }
     }
   }
@@ -307,18 +309,18 @@ function getAbfahrten(naechsteHaltestelle) {
 }
 
 /**
- * @function zeitUmrechnen
- * @param sekunden seconds that will be converted
- * @returns time in gmt format
+ * @function verbleibendeZeit()
+ * @description Die Funktion soll die Zeit bis der nächste Bus von der nächsten Station kommt ausrechnen
+ * @param {*} sekunden 
+ * @returns String verbleibende Zeit bis der Bus kommt in Minuten und Sekunden
  */
- function zeitUmrechnen(sekunden){
-  var datum = new Date(0);
-  datum.setSeconds(45);
-  var timeString = datum.toISOString().substr(11,8);
-  var millisek = sekunden * 1000;
-  var datum = new Date(millisek);
-  var zeit = datum.toISOString().slice(0,-5);
-  return zeit + "GMT";
+function verbleibendeZeit(sekunden) {
+  var akutellesDatum = new Date();
+  akutellesDatum = akutellesDatum.getTime() / 1000;
+  console.log(akutellesDatum);
+  var verbleibendeZeit = sekunden - akutellesDatum;
+  var verbleibendeZeitMin = Math.floor(verbleibendeZeit / 60);
+  var verbleibendeZeitSek = Math.round(verbleibendeZeit % 60);
+  var verbleibendeZeitZ = verbleibendeZeitMin + "Min " + verbleibendeZeitSek + "Sek";
+  return verbleibendeZeitZ
 }
-
-
