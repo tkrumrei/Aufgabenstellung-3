@@ -6,7 +6,7 @@
 "use strict";
 
 //declaration of global variables
-var pointcloud;
+var haltestellen = []
 var point;
 
 /**
@@ -31,8 +31,7 @@ function onLoad() {
   );
 
   //daten vorbereiten und main ausführen
-  pois = JSON.parse(pois);
-  main(point, pointcloud);
+  getHaltestellen();
 }
 
 //##############################################################################
@@ -44,7 +43,7 @@ function onLoad() {
 */
 function main(point, pointcloud) {
   //sortiere Daten nach distanz und mach damit eine Tabelle auf der HTML
-  let results = sortByDistance(point, pois);
+  let results = sortByDistance(point, pointcloud);
   drawTable(results);
 }
 
@@ -68,7 +67,7 @@ function refresh() {
     //check validity of the geoJSON. it can only be a point
     if (validGeoJSONPoint(positionGeoJSON)) {
       point = positionGeoJSON.features[0].geometry.coordinates;
-      main(point, pointcloud);
+      main(point, haltestellen);
     } else {
       alert("invalid input.please input a single valid point in a feature collection");
     }
@@ -89,17 +88,18 @@ function refresh() {
 function sortByDistance(point, pointArray) {
   let output = [];
 
-  for (let i = 0; i < pointArray.features.length; i++) {
-    let distance = twoPointDistance(point, pointArray.features[i].geometry.coordinates);
+  for (let i = 0; i < pointArray.length; i++) {
+    let distance = twoPointDistance(point, pointArray[i].coordinates);
     let j = 0;
     //Searches for the Place
     while (j < output.length && distance > output[j].distance) {
       j++;
     }
     let newPoint = {
-      coordinates: pointArray.features[i].geometry.coordinates,
-      distance: distance,
-      name: pointArray.features[i].properties.name
+      coordinates: pointArray[i].coordinates,
+      distance: distance.toFixed(2),
+      name: pointArray[i].lbez,
+      richtung: pointArray[i].richtung
     };
     output.splice(j, 0, newPoint);
   }
@@ -183,15 +183,17 @@ function toDegrees(radians) {
  */
 function drawTable(results) {
   var table = document.getElementById("resultTable");
-  //creates the Table with the direction an distances
-  for (var j = 0; j < results.length; j++) {
+  //creates the Table with the 
+  for (var j = 0; j < 15; j++) {
     var newRow = table.insertRow(j + 1);
     var cel1 = newRow.insertCell(0);
     var cel2 = newRow.insertCell(1);
     var cel3 = newRow.insertCell(2);
+    var cel4 = newRow.insertCell(3);
     cel1.innerHTML = results[j].coordinates;
     cel2.innerHTML = results[j].name;
-    cel3.innerHTML = results[j].distance;
+    cel3.innerHTML = results[j].richtung;
+    cel4.innerHTML = results[j].distance;
   }
 }
 
@@ -242,8 +244,11 @@ function getHaltestellen() {
   let xhr = new XMLHttpRequest 
   xhr.open('Get', 'https://rest.busradar.conterra.de/prod/haltestellen',true)
   xhr.onload = () => {
+    if (xhr.status >= 400) {
+      reject(response);
+    } else {
       let res = JSON.parse(xhr.response)
-      let haltestellen = new Array(res.features.length)
+      //haltestellen = new Array(res.features.length)
       for (var i = 0; i < res.features.length; i++) {
         haltestellen[i] = new Haltestelle(
           res.features[i].properties.nr,
@@ -251,7 +256,9 @@ function getHaltestellen() {
           res.features[i].properties.richtung, 
           res.features[i].geometry.coordinates
         )
-      }
+      } 
+      main(point, haltestellen);
+    }
   }
   xhr.send()
 }

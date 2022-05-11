@@ -5,15 +5,14 @@
   <title>GeoSoftware1 Aufgabenstellung 3</title>
   <meta charset="UTF-8">
   <link rel="stylesheet" type="text/css" href="style.css">
+  <script src="point.js"></script>
+  <script src="haltestelle.js"></script> 
+  <script src="script.js"></script>
    
 
 </head>
 <body onload="onLoad()">
-  <script src="pois.js"></script>
-  <script src="point.js"></script>
-  <script src="script.js"></script>
-  <script src="haltestelle.js"></script> 
-  
+
 
   <div class="a" align="center">
   <h1>GeoSoftware1 Aufgabenstellung 3</h1>
@@ -30,7 +29,6 @@
     <textarea rows="2" id="userPosition"></textarea><br>
     <button id="refreshBtn" class="button" type="button">refresh</button>
     <button id="getLocationBtn" class="button" type="button">get user location</button>
-    <button id="GetHaltestellen" onclick="getHaltestellen()">get Haltestellen</button>
   </div>
 
   <br>
@@ -42,9 +40,10 @@
 
   <table style="width:75%" align="center" id="resultTable">
     <tr>
-      <th>Coordinates</td>
-      <th>Point of Interest</td>
-      <th>Distance (in meters)</td>
+      <th>Koordinaten</td>
+      <th>Bushaltestellenname</td>
+      <th>Richtung</td>
+      <th>Distanz (in Meter)</th>
     </tr>
   </table>
 
