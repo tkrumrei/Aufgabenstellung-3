@@ -327,7 +327,6 @@ function getAbfahrten(naechsteHaltestelle) {
 function verbleibendeZeit(sekunden) {
   var akutellesDatum = new Date();
   akutellesDatum = akutellesDatum.getTime() / 1000;
-  console.log(akutellesDatum);
   var verbleibendeZeit = sekunden - akutellesDatum;
   var verbleibendeZeitMin = Math.floor(verbleibendeZeit / 60);
   var verbleibendeZeitSek = Math.round(verbleibendeZeit % 60);
