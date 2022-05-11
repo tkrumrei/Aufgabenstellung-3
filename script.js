@@ -8,7 +8,6 @@
 //declaration of global variables
 var haltestellen = [];
 var naechsteHaltestelle;
-var naechsteHaltestelleAbfahrt = [];
 var point;
 
 /**
@@ -44,7 +43,7 @@ function onLoad() {
 * @function main the main function
 */
 function main(point, pointcloud) {
-  //sortiere Daten nach distanz und mach damit eine Tabelle auf der HTML
+  //sortiere Daten nach distanz und mach damit eine Tabelle auf der HTML-Seite
   let results = sortByDistance(point, pointcloud);
   drawTable(results);
 }
@@ -107,8 +106,10 @@ function sortByDistance(point, pointArray) {
     
     output.splice(j, 0, newPoint);
   }
+  // Die nächstgelegene Haltestelle abspeichern
   naechsteHaltestelle = output[0];
 
+  // ruft getAbfahrten() auf um die Abfahrten der Busse an der nächstgelegenen Bushaltestelle in den nächsten 5 Minuten zu berechnen
   getAbfahrten(naechsteHaltestelle);
 
   return output;
@@ -185,13 +186,13 @@ function toDegrees(radians) {
 
 /**
  * @function drawTable
- * @desc inserts the calculated data into the table that's displayed on the page
+ * @desc Die 10 nächsten Bushaltestellen von dem Punkt in einer Tabelle ausgeben
  * @param {*} results array of JSON with contains
  */
 function drawTable(results) {
   var table = document.getElementById("resultTable");
   //creates the Table with the 
-  for (var j = 0; j < 15; j++) {
+  for (var j = 0; j < 10; j++) {
     var newRow = table.insertRow(j + 1);
     var cel1 = newRow.insertCell(0);
     var cel2 = newRow.insertCell(1);
@@ -204,6 +205,11 @@ function drawTable(results) {
   }
 }
 
+/**
+ * @function drawTableAbfahrt()
+ * @desc gibt die Ergebnisse in einer Tabelle aus
+ * @param {*} res Array der Abfahrtsattribute in den nächsten 5 Minuten von nächster Bushaltestelle
+ */
 function drawTableAbfahrt(res) {
   var table = document.getElementById("resultTableAbfahrt");
   for ( var j = 0; j < res.length; j++) {
@@ -284,6 +290,11 @@ function getHaltestellen() {
   xhr.send()
 }
 
+/**
+ * @function getAbfahrten()
+ * @description gibt die Abfahrten zu der nächstgelegenen Bushaltestelle aus mit Hilfe von XHR Request
+ * @param {*} naechsteHaltestelle Ein array mit der nächstgelegenen Haltestelle wird übergeben  
+ */
 function getAbfahrten(naechsteHaltestelle) {
   let xhr2 = new XMLHttpRequest;
   xhr2.open('Get', naechsteHaltestelle.aURL , true);
@@ -301,7 +312,6 @@ function getAbfahrten(naechsteHaltestelle) {
       } else {
         message = "Leider fahren in den nächsten 5 Minuten keine Busse von der Haltestelle " + naechsteHaltestelle.name + ".";
         document.getElementById('AbfahrtVon').innerHTML = message;
-        console.log("Ausblenden");
       }
     }
   }
