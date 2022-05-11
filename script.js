@@ -6,7 +6,9 @@
 "use strict";
 
 //declaration of global variables
-var haltestellen = []
+var haltestellen = [];
+var naechsteHaltestelle;
+var naechsteHaltestelleAbfahrt = [];
 var point;
 
 /**
@@ -30,7 +32,7 @@ function onLoad() {
     }
   );
 
-  //daten vorbereiten und main ausführen
+  //Haltestellen bekommen
   getHaltestellen();
 }
 
@@ -99,10 +101,15 @@ function sortByDistance(point, pointArray) {
       coordinates: pointArray[i].coordinates,
       distance: distance.toFixed(2),
       name: pointArray[i].lbez,
-      richtung: pointArray[i].richtung
+      richtung: pointArray[i].richtung,
+      aURL: pointArray[i].aURL
     };
+    
     output.splice(j, 0, newPoint);
   }
+  naechsteHaltestelle = output[0];
+
+  getAbfahrten(naechsteHaltestelle);
 
   return output;
 }
@@ -197,6 +204,21 @@ function drawTable(results) {
   }
 }
 
+function drawTableAbfahrt(res) {
+  var table = document.getElementById("resultTableAbfahrt");
+  for ( var j = 0; j < res.length; j++) {
+    var newRow = table.insertRow(j + 1);
+    var cel1 = newRow.insertCell(0);
+    var cel2 = newRow.insertCell(1);
+    var cel3 = newRow.insertCell(2);
+    var cel4 = newRow.insertCell(3);
+    cel1.innerHTML = res[j].linienid;
+    cel2.innerHTML = res[j].lbez;
+    cel3.innerHTML = res[j].richtungstext;
+    cel4.innerHTML = zeitUmrechnen(res[j].ankunftszeit);
+  }
+}
+
 /**
 * @function arrayToGeoJSON
 * @desc function that converts a given array of points into a geoJSON feature collection.
@@ -241,14 +263,13 @@ function showPosition(position) {
  * @description with XHR Request Haltestellen-Array erstellen 
  */
 function getHaltestellen() {
-  let xhr = new XMLHttpRequest 
-  xhr.open('Get', 'https://rest.busradar.conterra.de/prod/haltestellen',true)
+  let xhr = new XMLHttpRequest; 
+  xhr.open('Get', 'https://rest.busradar.conterra.de/prod/haltestellen',true);
   xhr.onload = () => {
     if (xhr.status >= 400) {
       reject(response);
     } else {
-      let res = JSON.parse(xhr.response)
-      //haltestellen = new Array(res.features.length)
+      let res = JSON.parse(xhr.response);
       for (var i = 0; i < res.features.length; i++) {
         haltestellen[i] = new Haltestelle(
           res.features[i].properties.nr,
@@ -256,10 +277,48 @@ function getHaltestellen() {
           res.features[i].properties.richtung, 
           res.features[i].geometry.coordinates
         )
-      } 
+      }
       main(point, haltestellen);
     }
   }
   xhr.send()
 }
+
+function getAbfahrten(naechsteHaltestelle) {
+  let xhr2 = new XMLHttpRequest;
+  xhr2.open('Get', naechsteHaltestelle.aURL , true);
+  xhr2.onload = () => {
+    if (xhr2.status >= 400) {
+      reject(response);
+    } else {
+      let res = JSON.parse(xhr2.response);
+      console.log(res);
+      if(res.length > 0) {
+        document.getElementById('AbfahrtVon').innerHTML = 'Hier sind die Busse, die von ' + naechsteHaltestelle.name + ' abfahren:';
+        drawTableAbfahrt(res);
+      } else {
+        document.getElementById('AbfahrtVon').innerHTML = "Leider fahren in den nächsten 5 Minuten keine Busse von der Haltestelle " + naechsteHaltestelle.name + ".";
+        console.log("Ausblenden");
+        document.getElementById('resultTableAbfahrt').style.visibility = none ;
+      }
+    }
+  }
+  xhr2.send();
+}
+
+/**
+ * @function zeitUmrechnen
+ * @param sekunden seconds that will be converted
+ * @returns time in gmt format
+ */
+ function zeitUmrechnen(sekunden){
+  var datum = new Date(0);
+  datum.setSeconds(45);
+  var timeString = datum.toISOString().substr(11,8);
+  var millisek = sekunden * 1000;
+  var datum = new Date(millisek);
+  var zeit = datum.toISOString().slice(0,-5);
+  return zeit + "GMT";
+}
+
 
