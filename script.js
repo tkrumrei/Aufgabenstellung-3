@@ -303,7 +303,6 @@ function getAbfahrten(naechsteHaltestelle) {
       reject(response);
     } else {
       let res = JSON.parse(xhr2.response);
-      console.log(res);
       let message = "";
       if(res.length > 0) {
         message = 'Hier sind die Busse, die von ' + naechsteHaltestelle.name + ' abfahren:';
